@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<title>GitHub 数学宏可用性探测</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;line-height:1.7}
+table{border-collapse:collapse;width:100%;margin-top:12px}th,td{border:1px solid #d0d7de;padding:8px 12px;text-align:left;vertical-align:middle}
+th{background:#f6f8fa}code{background:#f6f8fa;padding:1px 5px;border-radius:4px;font-size:13px}
+.ok{color:#1a7f37;font-weight:600}.bad{color:#cf222e;font-weight:600}
+mjx-container{font-size:110%!important}</style>
+<script>
+window.MathJax={
+  tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]},
+  svg:{fontCache:'global'},
+  startup:{
+    pageReady:()=>MathJax.startup.defaultPageReady().then(()=>{
+      // 渲染失败的片段会保留原始 TeX 文本；据此标记
+      document.querySelectorAll('td.probe').forEach(td=>{
+        const st=td.querySelector('mjx-container');
+        const v=td.querySelector('.verdict');
+        if(st){v.textContent='✓ 可用';v.className='verdict ok';}
+        else{v.textContent='✗ 不可用';v.className='verdict bad';}
+      });
+      const bad=[...document.querySelectorAll('.verdict.bad')].map(e=>e.closest('tr').dataset.macro);
+      document.getElementById('summary').innerHTML = bad.length
+        ? '<b class="bad">不可用的宏：</b> <code>'+bad.join('</code> <code>')+'</code>'
+        : '<b class="ok">全部可用</b>';
+    })
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+</head><body>
+<h1>GitHub 数学宏可用性探测</h1>
+<p>本页用 GitHub 同款的 <b>MathJax v3 + tex-svg</b> 配置渲染。<b>绿色</b> = 该宏渲染成功；<b>红色</b> = 渲染失败。</p>
+<p id="summary">检测中…</p>
+<table>
+<tr><th>宏</th><th>测试式</th><th>渲染结果</th><th>判定</th></tr>
+<tr data-macro="\\mathrm"><td><code>\mathrm</code></td><td class="probe">$\mathrm{rank}(H_Z)$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\operatorname"><td><code>\operatorname</code></td><td class="probe">$\operatorname{rank}(H_Z)$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\text"><td><code>\text</code></td><td class="probe">$\text{hello}$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\lvert\\rvert"><td><code>\lvert \rvert</code></td><td class="probe">$\lvert F \rvert$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\ker"><td><code>\ker</code></td><td class="probe">$\ker\partial$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\dim"><td><code>\dim</code></td><td class="probe">$\dim\mathcal C$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\deg"><td><code>\deg</code></td><td class="probe">$\deg_{\partial f}(v)$</td><td class="verdict">…</td></tr>
+<tr data-macro="pmatrix"><td><code>\begin{pmatrix}</code></td><td class="probe">$\begin{pmatrix}1&0\\0&1\end{pmatrix}$</td><td class="verdict">…</td></tr>
+<tr data-macro="aligned"><td><code>\begin{aligned}</code></td><td class="probe">$\begin{aligned}a&=b\\c&=d\end{aligned}$</td><td class="verdict">…</td></tr>
+<tr data-macro="cases"><td><code>\begin{cases}</code></td><td class="probe">$\begin{cases}x&x>0\\0&x\le0\end{cases}$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\xrightarrow"><td><code>\xrightarrow</code></td><td class="probe">$A \xrightarrow{f} B$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\overset"><td><code>\overset</code></td><td class="probe">$A \overset{?}{=} B$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\mathop"><td><code>\mathop{\mathrm{}}</code></td><td class="probe">$\mathop{\mathrm{rank}}(H)$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\upharpoonright"><td><code>\upharpoonright</code></td><td class="probe">$A \upharpoonright B$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\bigotimes"><td><code>\bigotimes</code></td><td class="probe">$\bigotimes_{e\in E}\mathbb C^2$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\dagger"><td><code>\dagger</code></td><td class="probe">$H^\dagger$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\rm"><td><code>\rm</code></td><td class="probe">$\mathrm{girth}_{\rm ess}$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\square"><td><code>\square</code></td><td class="probe">$\square$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\Big"><td><code>\Big</code></td><td class="probe">$\Big(\prod_e X_e\Big)$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\boxed"><td><code>\boxed</code></td><td class="probe">$\boxed{k=\beta_1}$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\lVert"><td><code>\lVert \rVert</code></td><td class="probe">$\lVert\psi\rVert$</td><td class="verdict">…</td></tr>
+<tr data-macro="\\simeq"><td><code>\simeq</code></td><td class="probe">$A\simeq B$</td><td class="verdict">…</td></tr>
+</table>
+<hr>
+<p><b>注意：</b>本页是<strong>同款引擎的近似</strong>，不是 github.com 本身。若要把结论用在 README 上，请以 github.com 的实际渲染为准（可对照仓库里的公式）。</p>
+<p>生成自 Zero-CSS 项目的宏审计。</p>
+</body></html>
