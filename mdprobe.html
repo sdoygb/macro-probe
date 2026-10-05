@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><title>Markdown × MathJax 行内公式诊断</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1200px;margin:20px auto;padding:0 16px;line-height:1.7}
+table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #d0d7de;padding:8px;vertical-align:top}
+th{background:#f6f8fa}.good{background:#dafbe1}.bad{background:#ffebe9}
+code{background:#f6f8fa;padding:1px 4px;border-radius:3px;font-size:12px}
+pre{background:#f6f8fa;padding:8px;border-radius:6px;overflow-x:auto;font-size:12px;margin:4px 0}
+.src{font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap;word-break:break-all}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+window.MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]},svg:{fontCache:'global'},
+ startup:{pageReady:()=>MathJax.startup.defaultPageReady().then(verdict)}};
+function verdict(){
+  document.querySelectorAll('tr[data-case]').forEach(tr=>{
+    const out=tr.querySelector('.render');
+    const v=tr.querySelector('.verdict');
+    const hasMath=out.querySelector('mjx-container');
+    const txt=out.textContent||'';
+    // 判定：出现原始 $ 或 \ 说明没被当成公式
+    const raw=/\$|\\[a-zA-Z]/.test(txt);
+    if(hasMath && !raw){ v.textContent='✓ 公式渲染成功'; v.className='verdict good'; }
+    else { v.textContent='✗ 失败：公式未被识别（Markdown 吃掉了 $ 或 _）'; v.className='verdict bad'; }
+  });
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head><body>
+<h1>Markdown × MathJax 行内公式诊断</h1>
+<p>每一行：先用 <b>marked</b>（GitHub 同款 Markdown 规则）解析成 HTML，再用 <b>MathJax v3</b> 渲染。
+若 Markdown 把 <code>_</code> 当成斜体标记，<code>$</code> 就会失去配对，公式渲染失败 —— 表格里会显示原始 TeX。</p>
+<table>
+<tr><th style="width:38%">Markdown 源码</th><th style="width:40%">渲染结果</th><th style="width:22%">判定</th></tr>
+
+<tr data-case><td class="src">未证：$\mathrm{rank}(K_Z)$ 的闭式（$\mathrm{rel}$ 由什么决定）；$d$ 与 girth 的关系。</td>
+<td class="render" data-md="未证：$\mathrm{rank}(K_Z)$ 的闭式（$\mathrm{rel}$ 由什么决定）；$d$ 与 girth 的关系。"></td><td class="verdict"></td></tr>
+
+<tr data-case><td class="src">**已证**：$k=2E-(V-c)-\mathrm{rank}(K_Z)$；连通时 $k=2E-(V-1)-F$（11 例实测）。</td>
+<td class="render" data-md="**已证**：$k=2E-(V-c)-\mathrm{rank}(K_Z)$；连通时 $k=2E-(V-1)-F$（11 例实测）。"></td><td class="verdict"></td></tr>
+
+<tr data-case><td class="src">$k=2\beta_1$ **不普遍成立**（已否证）。</td>
+<td class="render" data-md="$k=2\beta_1$ **不普遍成立**（已否证）。"></td><td class="verdict"></td></tr>
+
+<tr data-case><td class="src">单下划线：$K_Z$</td>
+<td class="render" data-md="单下划线：$K_Z$"></td><td class="verdict"></td></tr>
+
+<tr data-case><td class="src">无下划线对照：$K$ 与 $d$</td>
+<td class="render" data-md="无下划线对照：$K$ 与 $d$"></td><td class="verdict"></td></tr>
+
+<tr data-case><td class="src">转义下划线：$\mathrm{rank}(K\_Z)$ 的闭式（$\mathrm{rel}$ 由什么决定）</td>
+<td class="render" data-md="转义下划线：$\mathrm{rank}(K\_Z)$ 的闭式（$\mathrm{rel}$ 由什么决定）"></td><td class="verdict"></td></tr>
+
+<tr data-case><td class="src">用花括号：$\mathrm{rank}(K_{Z})$ 的闭式（$\mathrm{rel}$ 由什么决定）</td>
+<td class="render" data-md="用花括号：$\mathrm{rank}(K_{Z})$ 的闭式（$\mathrm{rel}$ 由什么决定）"></td><td class="verdict"></td></tr>
+
+<tr data-case><td class="src">连续两个：$r_X$ 与 $r_Z$ 的差</td>
+<td class="render" data-md="连续两个：$r_X$ 与 $r_Z$ 的差"></td><td class="verdict"></td></tr>
+</table>
+<script>
+document.querySelectorAll('td.render[data-md]').forEach(td=>{
+  const src=td.getAttribute('data-md');
+  td.innerHTML=marked.parse(src);
+});
+</script>
+<hr><p>本页用于诊断 Zero-CSS 文档的行内公式渲染问题。</p>
+</body></html>
